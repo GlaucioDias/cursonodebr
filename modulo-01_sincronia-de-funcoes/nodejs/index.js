@@ -40,66 +40,29 @@ function obterEndereco(idUsuario, callback) {
   }, 2000);
 }
 
-const usuarioPromise = obterUsuario()
+// Adicionar a palavra async -> automaticamente ela returnará uma Promise
+async function main() {
+  try {
+    console.time('tempo-promise')
+    const usuario = await obterUsuario()
 
-usuarioPromise
-  .then(function (usuario) {
-    return obterTelefone(usuario.id)
-      .then(function resolverTelefone(result) {
-        return {
-          usuario: {
-            id: usuario.id,
-            nome: usuario.nome
-          },
-          telefone: result
-        }
-      })
-  })
-  .then(function (resultado) {
-    const endereco = obterEnderecoAsync(resultado.usuario.id)
-    return endereco.then(function resolverEndereco(result) {
-      return {
-        usuario: resultado.usuario,
-        telefone: resultado.telefone,
-        endereco: result
-      }
-    });
-  })
-  .then(function (resultado) {
-    // console.log('resultado', resultado)
+    const resultado = await Promise.all([
+      obterTelefone(usuario.id),
+      obterEnderecoAsync(usuario.id)      
+    ])
+    const endereco = resultado[1]
+    const telefone = resultado[0]
+
     console.log(`
-         Nome: ${resultado.usuario.nome}
-         Endereço: ${resultado.endereco.rua}, Nro ${resultado.endereco.numero}
-         Telefone: (${resultado.telefone.ddd}) ${resultado.telefone.telefone}
+         Nome: ${usuario.nome}
+         Endereço: ${endereco.rua}, Nro ${endereco.numero}
+         Telefone: (${telefone.ddd}) ${telefone.telefone}
        `)
-  })
-  .catch(function (error) {
-    console.error('Deu ruim', error)
-  })
+    console.timeEnd('tempo-promise')
+  } catch (error) {
+    console.error(error)
+  }
+}
 
-
-
-// obterUsuario(function resolverUsuario(error, usuario) {
-//   if(error) {
-//     console.error('Deu ruim no usuario', error)
-//     return;
-//   }
-//   obterTelefone(usuario.id, function resolverTelefone(error1, telefone) {
-//     if(error1) {
-//       console.error('Deu ruim no telefone', error1)
-//       return;
-//     } 
-//     obterEndereco(usuario.id, function resolverEndereco(error2, endereco) {
-//       if(error2) {
-//         console.error('Deu ruim no endereço', error2)
-//       }
-//       console.log(`
-//         Nome: ${usuario.nome}
-//         Endereço: ${endereco.rua}, Nro ${endereco.numero}
-//         Telefone: (${telefone.ddd}) ${telefone.telefone}
-//       `)
-//     })
-//   })
-
-// })
+main()
 
