@@ -1,0 +1,12 @@
+{
+  "name": "modulo-04_criando-ferramentas-de-linha-de-comando",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "^9.0.1"
+  }
+}
